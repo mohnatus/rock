@@ -1,79 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Russian rock admin</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Russian rock admin</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <body class="loading">
+    <div id="app">
+      <dialog id="add-singer-dialog">
+        <form id="add-singer-form" action="/singer" method="POST">
+          <input type="text" name="name" autocomplete="off" />
+          <button type="submit">Add singer</button>
+        </form>
+      </dialog>
 
-<body class="loading">
-  <div id="app">
-    <dialog id="add-singer-dialog">
-      <form id="add-singer-form" action="/singer" method="POST">
-        <input type="text" name="name" autocomplete="off">
-        <button type="submit">Add singer</button>
-      </form>
-    </dialog>
+      <dialog id="edit-singer-dialog">
+        <form id="edit-singer-form" action="/singer" method="UPDATE">
+          <input type="hidden" name="id" />
+          <input type="text" name="name" autocomplete="off" />
+          <button type="submit">Update singer name</button>
+        </form>
+      </dialog>
 
-    <dialog id="edit-singer-dialog">
-      <form id="edit-singer-form" action="/singer" method="UPDATE">
-        <input type="hidden" name="id">
-        <input type="text" name="name" autocomplete="off">
-        <button type="submit">Update singer name</button>
-      </form>
-    </dialog>
+      <dialog id="add-album-dialog">
+        <form action="/album" id="add-album-form" method="POST">
+          <input type="text" name="name" autocomplete="off" />
+          <select name="singer"></select>
+          <button type="submit">ADD ALBUM</button>
+        </form>
+      </dialog>
 
-    <dialog id="add-album-dialog">
-      <form action="/album" id="add-album-form" method="POST">
-        <input type="text" name="name" autocomplete="off">
-        <select name="singer"></select>
-        <button type="submit">ADD ALBUM</button>
-      </form>
-    </dialog>
+      <dialog id="edit-album-dialog">
+        <form action="/album" id="edit-album-form" method="UPDATE">
+          <input type="hidden" name="id" />
+          <input type="text" name="name" autocomplete="off" />
+          <select name="singer"></select>
+          <button type="submit">UPDATE ALBUM</button>
+        </form>
+      </dialog>
 
-    <dialog id="edit-album-dialog">
-      <form action="/album" id="edit-album-form" method="UPDATE">
-        <input type="hidden" name="id">
-        <input type="text" name="name" autocomplete="off">
-        <select name="singer"></select>
-        <button type="submit">UPDATE ALBUM</button>
-      </form>
-    </dialog>
+      <dialog id="add-song-dialog">
+        <form action="/song" id="add-song-form" method="POST">
+          <input type="text" name="name" autocomplete="off" />
+          <textarea name="text"></textarea>
+          <select name="singer"></select>
+          <select name="album"></select>
+          <button type="submit">ADD SONG</button>
+        </form>
+      </dialog>
 
-    <dialog id="add-song-dialog">
-      <form action="/song" id="add-song-form" method="POST">
-        <input type="text" name="name" autocomplete="off">
-        <textarea name="text"></textarea>
-        <select name="singer"></select>
-        <select name="album"></select>
-        <button type="submit">ADD SONG</button>
-      </form>
-    </dialog>
+      <dialog id="edit-song-dialog">
+        <form action="/song" id="edit-song-form" method="UPDATE">
+          <input type="hidden" name="id" />
+          <div>
+            <input type="text" name="name" autocomplete="off" />
+          </div>
+          <div>
+            <textarea name="text"></textarea>
+          </div>
+          <div>
+            <select name="singer"></select>
+          </div>
+          <div>
+            <select name="album"></select>
+          </div>
 
-    <dialog id="edit-song-dialog">
-      <form action="/song" id="edit-song-form" method="UPDATE">
-        <input type="hidden" name="id">
-        <input type="text" name="name" autocomplete="off">
-        <textarea name="text"></textarea>
-        <select name="singer"></select>
-        <select name="album"></select>
-        <button type="submit">UPDATE SONG</button>
-      </form>
-    </dialog>
+          <button type="submit">UPDATE SONG</button>
+        </form>
+      </dialog>
 
-    <header>
-      <button id="add-singer">ADD SINGER</button>
-    </header>
+      <header>
+        <button id="add-singer">ADD SINGER</button>
+      </header>
 
-    <section id="singers-list">
-    </section>
+      <section id="singers-list"></section>
 
-    <div class="loader"></div>
-  </div>
-  <script src="script.js"></script>
-</body>
-
+      <div class="loader"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
