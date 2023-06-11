@@ -1,0 +1,65 @@
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.5);
+  display: none;
+}
+
+body.loading .loader {
+  display: block;
+}
+
+.singer {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 2px solid gray;
+	width: 400px;
+}
+.singer-header {
+	display: flex;
+	margin-bottom: 10px;
+}
+.singer-name {
+	font-weight: bold;
+	flex-grow: 1;
+}
+.albums-list {
+	margin-left: 20px;
+}
+.album {
+	border: 1px solid gray;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+.album-header {
+	display: flex;
+	margin-bottom: 5px;
+}
+.album-name {
+	flex-grow: 1;
+}
+.songs-list {
+	padding-left: 20px;
+}
+.song {
+	display: flex;
+}
+.song:not(:last-child) {
+	margin-bottom: 10px;
+}
+.song-name {
+	flex-grow: 1;
+  font-style: italic;
+}
+
+.singer-actions,
+.album-actions,
+.song-actions {
+	flex-shrink: 0;
+	display: flex;
+	gap: 10px;
+	margin-left: 10px;
+}
