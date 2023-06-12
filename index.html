@@ -9,76 +9,264 @@
   </head>
 
   <body class="loading">
-    <div id="app">
-      <dialog id="add-singer-dialog">
-        <form id="add-singer-form" action="/singer" method="POST">
-          <input type="text" name="name" autocomplete="off" />
-          <button type="submit">Add singer</button>
-        </form>
-      </dialog>
+    <template id="song-template">
+      <div class="song" data-attr="id">
+        <div class="song-name" data-text="name"></div>
+        <div class="song-actions">
+          <button type="button" class="song-edit" data-action="edit">
+            EDIT
+          </button>
+          <button type="button" class="song-remove" data-action="remove">
+            &times;
+          </button>
+        </div>
+      </div>
+    </template>
 
-      <dialog id="edit-singer-dialog">
-        <form id="edit-singer-form" action="/singer" method="UPDATE">
-          <input type="hidden" name="id" />
-          <input type="text" name="name" autocomplete="off" />
-          <button type="submit">Update singer name</button>
-        </form>
-      </dialog>
-
-      <dialog id="add-album-dialog">
-        <form action="/album" id="add-album-form" method="POST">
-          <input type="text" name="name" autocomplete="off" />
-          <select name="singer"></select>
-          <button type="submit">ADD ALBUM</button>
-        </form>
-      </dialog>
-
-      <dialog id="edit-album-dialog">
-        <form action="/album" id="edit-album-form" method="UPDATE">
-          <input type="hidden" name="id" />
-          <input type="text" name="name" autocomplete="off" />
-          <select name="singer"></select>
-          <button type="submit">UPDATE ALBUM</button>
-        </form>
-      </dialog>
-
-      <dialog id="add-song-dialog">
-        <form action="/song" id="add-song-form" method="POST">
-          <input type="text" name="name" autocomplete="off" />
-          <div><textarea name="text"></textarea></div>
-          <div><select name="singer"></select></div>
-          <div><select name="album"></select></div>
-          <div><button type="submit">ADD SONG</button></div>
-        </form>
-      </dialog>
-
-      <dialog id="edit-song-dialog">
-        <form action="/song" id="edit-song-form" method="UPDATE">
-          <input type="hidden" name="id" />
-          <div>
-            <input type="text" name="name" autocomplete="off" />
+    <template id="album-template">
+      <div class="album" data-attr="id">
+        <div class="album-header">
+          <div class="album-name" data-text="name"></div>
+          <div class="album-actions">
+            <button type="button" class="singer-add-song" data-action="addSong">
+              ADD SONG
+            </button>
+            <button type="button" class="album-edit" data-action="edit">
+              EDIT
+            </button>
+            <button type="button" class="album-remove" data-action="remove">
+              &times;
+            </button>
           </div>
-          <div>
-            <textarea name="text"></textarea>
+        </div>
+        <div class="songs-list" data-list></div>
+      </div>
+    </template>
+
+    <template id="singer-template">
+      <div class="singer" data-attr="id">
+        <div class="singer-header">
+          <div class="singer-name" data-text="name"></div>
+          <div class="singer-actions">
+            <button
+              type="button"
+              class="singer-add-album"
+              data-action="addAlbum"
+            >
+              ADD ALBUM
+            </button>
+            <button type="button" class="singer-edit" data-action="edit">
+              EDIT
+            </button>
+            <button type="button" class="singer-remove" data-action="remove">
+              &times;
+            </button>
           </div>
-          <div>
-            <select name="singer"></select>
+        </div>
+        <div class="albums-list" data-list></div>
+      </div>
+    </template>
+
+    <dialog id="add-singer-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Добавить исполнителя</h2>
+      <form id="add-singer-form" action="/singer" method="POST">
+        <div class="form-control">
+          <label for="add-singer-name">Название</label>
+          <input
+            type="text"
+            id="add-singer-name"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="edit-singer-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Изменить исполнителя</h2>
+      <form id="edit-singer-form" action="/singer" method="UPDATE">
+        <input type="hidden" name="id" />
+        <div class="form-control">
+          <label for="edit-singer-name">Название</label>
+          <input
+            id="edit-singer-name"
+            type="text"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="add-album-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Добавить альбом</h2>
+      <form action="/album" id="add-album-form" method="POST">
+        <div class="form-control">
+          <label for="add-album-name">Название</label>
+          <input
+            id="add-album-name"
+            type="text"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-control">
+          <label for="add-album-singer">Исполнитель</label>
+          <select id="add-album-singer" name="singer"></select>
+        </div>
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="edit-album-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Изменить альбом</h2>
+      <form action="/album" id="edit-album-form" method="UPDATE">
+        <input type="hidden" name="id" />
+        <div class="form-control">
+          <label for="edit-album-name">Название</label>
+          <input
+            id="edit-album-name"
+            type="text"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-control">
+          <label for="edit-album-singer">Исполнитель</label>
+          <select id="edit-album-singer" name="singer"></select>
+        </div>
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="add-song-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Добавить песню</h2>
+      <form action="/song" id="add-song-form" method="POST">
+        <div class="form-control">
+          <label for="add-song-name">Название</label>
+          <input
+            id="add-song-name"
+            type="text"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-control">
+          <label for="add-song-text">Текст</label>
+          <textarea id="add-song-text" name="text"></textarea>
+        </div>
+        <div class="form-control">
+          <label for="add-song-singer">Исполнитель</label>
+          <select id="add-song-singer" name="singer"></select>
+        </div>
+        <div class="form-control">
+          <label for="add-song-album">Альбом</label>
+          <select id="add-song-album" name="album"></select>
+        </div>
+        <div class="form-control">
+          <label for="add-song-url">Ссылка на клип</label>
+          <input id="add-song-url" type="text" name="url" />
+        </div>
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="edit-song-dialog">
+      <button type="button" class="dialog-close">&times;</button>
+      <h2 class="dialog-title">Изменить песню</h2>
+      <form action="/song" id="edit-song-form" method="UPDATE">
+        <input type="hidden" name="id" />
+        <div class="form-control">
+          <label for="edit-song-name">Название</label>
+          <input
+            id="edit-song-name"
+            type="text"
+            name="name"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-control">
+          <label for="edit-song-text">Текст</label>
+          <textarea id="edit-song-text" name="text"></textarea>
+        </div>
+        <div class="form-control">
+          <label for="edit-song-singer">Исполнитель</label>
+          <select id="edit-song-singer" name="singer"></select>
+        </div>
+        <div class="form-control">
+          <label for="edit-song-album">Альбом</label>
+          <select id="edit-song-album" name="album"></select>
+        </div>
+        <div class="form-control">
+          <label for="edit-song-url">Ссылка на клип</label>
+          <input id="edit-song-url" type="text" name="url" />
+        </div>
+
+        <footer class="form-footer">
+          <button type="submit">Сохранить</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div id="app" class="app">
+      <div class="app-container">
+        <header class="app-header">
+          <div class="app-header-container">
+            <button id="add-singer">ADD SINGER</button>
+
+            <button onclick="getRandom()">Random</button>
           </div>
-          <div>
-            <select name="album"></select>
-          </div>
+        </header>
 
-          <button type="submit">UPDATE SONG</button>
-        </form>
-      </dialog>
+        <section id="singers-list"></section>
 
-      <header>
-        <button id="add-singer">ADD SINGER</button>
-      </header>
-
-      <section id="singers-list"></section>
-
-      <div class="loader"></div>
+        <div class="loader">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="shape-rendering: auto"
+            width="50"
+            height="50"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              fill="none"
+              stroke="#292664"
+              stroke-width="10"
+              r="35"
+              stroke-dasharray="164.93361431346415 56.97787143782138"
+            >
+              <animateTransform
+                attributeName="transform"
+                type="rotate"
+                repeatCount="indefinite"
+                dur="1s"
+                values="0 50 50;360 50 50"
+                keyTimes="0;1"
+              />
+            </circle>
+          </svg>
+        </div>
+      </div>
     </div>
 
     <script src="./js/state.js" type="module"></script>
@@ -99,5 +287,15 @@
     <script src="./js/singer.js" type="module"></script>
 
     <script src="./script.js" type="module"></script>
+
+    <script>
+      function getRandom() {
+        fetch("./api/random-song.php")
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+          });
+      }
+    </script>
   </body>
 </html>

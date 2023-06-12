@@ -27,13 +27,13 @@ export function openAddSongDialog(albumId) {
   $dialog.showModal();
 }
 
-export function addSong(name, text, albumId) {
+export function addSong(songData) {
+  const { name, text, albumId, url } = songData;
   emit(events.setLoadingStatus, true);
 
-  api.createSong(name, text, albumId).then((songData) => {
+  api.createSong({ name, text, albumId, url }).then((songData) => {
     state.addSong(songData);
-    const album = state.getAlbum(songData.albumId);
-    const $album = findAlbumElement(album.id);
+    const $album = findAlbumElement(albumId);
     const $songs = $album.querySelector(`.${classes.songsList}`);
     const $song = renderSong(songData);
     $songs.appendChild($song);
@@ -50,6 +50,7 @@ export function openEditSongDialog(songId) {
   $form.elements.id.value = song.id;
   $form.elements.name.value = song.name;
   $form.elements.text.value = song.text;
+  $form.elements.url.value = song.url;
 
   const album = state.getAlbum(song.albumId);
   const singerId = album.singerId;
@@ -63,10 +64,11 @@ export function openEditSongDialog(songId) {
   $dialog.showModal();
 }
 
-export function editSong(id, name, text, albumId) {
+export function editSong(songData) {
+  const { id, name, text, albumId, url } = songData;
   emit(events.setLoadingStatus, true);
 
-  api.updateSong(id, name, text, albumId).then((songData) => {
+  api.updateSong({ id, name, text, albumId, url }).then((songData) => {
     state.editSong(songData);
 
     const $song = findSongElement(songData.id);

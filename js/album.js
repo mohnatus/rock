@@ -1,5 +1,5 @@
 import { events, on } from "./emitter.js";
-import { getElement, ids } from "./utils.js";
+import { getElement, ids, initDialog } from "./utils.js";
 import {
   addAlbum,
   editAlbum,
@@ -11,6 +11,8 @@ import {
 function initAddAlbumForm() {
   const $dialog = getElement(ids.addAlbumDialog);
   const $form = getElement(ids.addAlbumForm);
+
+  initDialog($dialog);
 
   function handler(event) {
     event.preventDefault();
@@ -30,6 +32,8 @@ function initAddAlbumForm() {
 function initEditAlbumForm() {
   const $dialog = getElement(ids.editAlbumDialog);
   const $form = getElement(ids.editAlbumForm);
+
+  initDialog($dialog);
 
   function handler(event) {
     event.preventDefault();

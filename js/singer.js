@@ -1,4 +1,4 @@
-import { getElement, ids } from "./utils.js";
+import { getElement, ids, initDialog } from "./utils.js";
 import { on, events } from "./emitter.js";
 import {
   addSinger,
@@ -20,6 +20,8 @@ function initAddSingerForm() {
   const $form = getElement(ids.addSingerForm);
   const $dialog = getElement(ids.addSingerDialog);
 
+  initDialog($dialog);
+
   function submitHandler(event) {
     event.preventDefault();
     const name = $form.elements.name.value;
@@ -36,6 +38,8 @@ function initAddSingerForm() {
 function initEditSingerForm() {
   const $form = getElement(ids.editSingerForm);
   const $dialog = getElement(ids.editSingerDialog);
+
+  initDialog($dialog);
 
   function handler(event) {
     event.preventDefault();

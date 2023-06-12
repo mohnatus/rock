@@ -1,5 +1,5 @@
 import { events, on } from "./emitter.js";
-import { getElement, linkSingerAndAlbum, ids } from "./utils.js";
+import { getElement, linkSingerAndAlbum, ids, initDialog } from "./utils.js";
 import {
   addSong,
   editSong,
@@ -12,6 +12,8 @@ function initAddSongForm() {
   const $form = getElement(ids.addSongForm);
   const $dialog = getElement(ids.addSongDialog);
 
+  initDialog($dialog);
+
   linkSingerAndAlbum($form.elements.singer, $form.elements.album);
 
   function handler(event) {
@@ -20,8 +22,9 @@ function initAddSongForm() {
     const name = $form.elements.name.value;
     const text = $form.elements.text.value;
     const albumId = parseInt($form.elements.album.value);
+    const url = $form.elements.url.value;
 
-    addSong(name, text, albumId);
+    addSong({ name, text, albumId, url });
 
     $dialog.close();
     $form.reset();
@@ -34,6 +37,8 @@ function initEditSongForm() {
   const $form = getElement(ids.editSongForm);
   const $dialog = getElement(ids.editSongDialog);
 
+  initDialog($dialog);
+
   linkSingerAndAlbum($form.elements.singer, $form.elements.album);
 
   function handler(event) {
@@ -43,8 +48,9 @@ function initEditSongForm() {
     const name = $form.elements.name.value;
     const text = $form.elements.text.value;
     const albumId = parseInt($form.elements.album.value);
+    const url = $form.elements.url.value;
 
-    editSong(id, name, text, albumId);
+    editSong({ id, name, text, albumId, url });
 
     $dialog.close();
     $form.reset();

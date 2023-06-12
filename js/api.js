@@ -52,20 +52,25 @@ export const api = {
   deleteAlbum: (id) =>
     request(`./api/album.php?id=${id}`, { method: "DELETE" }),
 
-  createSong: (name, text, albumId) =>
-    request("./api/song.php", {
+  createSong: (songData) => {
+    const { name, text, albumId, url } = songData;
+    return request("./api/song.php", {
       method: "POST",
-      body: { name, text, albumId },
-    }),
-  updateSong: (id, name, text, albumId) =>
-    request("./api/song.php", {
+      body: { name, text, albumId, url },
+    });
+  },
+  updateSong: (songData) => {
+    const { id, name, text, albumId, url } = songData;
+    return request("./api/song.php", {
       method: "POST",
       body: {
         id,
         name,
         text,
         albumId,
+        url,
       },
-    }),
+    });
+  },
   deleteSong: (id) => request(`./api/song.php?id=${id}`, { method: "DELETE" }),
 };

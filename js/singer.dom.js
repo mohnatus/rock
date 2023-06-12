@@ -1,6 +1,6 @@
 import { state } from "./state.js";
 import { events, emit } from "./emitter.js";
-import { classes, render } from "./utils.js";
+import { fromTemplate, classes } from "./utils.js";
 import { renderAlbum } from "./album.dom.js";
 
 export function findSingerElement(id) {
@@ -9,46 +9,21 @@ export function findSingerElement(id) {
 }
 
 export function renderSinger(singer) {
-  const $name = render("div", null, {
-    className: classes.singerName,
-    text: singer.name,
-  });
-  const $remove = render("button", null, {
-    attrs: { type: "button" },
-    className: classes.singerRemove,
-    text: "&times;",
-  });
-  const $edit = render("button", null, {
-    text: "EDIT",
-    className: classes.singerEdit,
-    attrs: { type: "button" },
-  });
-  const $addAlbum = render("button", null, {
-    text: "ADD ALBUM",
-    className: classes.singerAddAlbum,
-    attrs: { type: "button" },
-  });
-  const $actions = render("div", [$addAlbum, $edit, $remove], {
-    className: classes.singerActions,
-  });
-  const $header = render("div", [$name, $actions], {
-    className: classes.singerHeader,
+  const $singer = fromTemplate("singer-template", {
+    name: singer.name,
+    id: singer.id,
   });
 
+  const $remove = $singer.querySelector('[data-action="remove"]');
+  const $edit = $singer.querySelector('[data-action="edit"]');
+  const $addAlbum = $singer.querySelector('[data-action="addAlbum"]');
+  const $albums = $singer.querySelector("[data-list]");
+
   const singerAlbums = state.getSingerAlbums(singer.id);
-  const $albums = render(
-    "div",
-    singerAlbums.map((album) => {
-      return renderAlbum(album);
-    }),
-    {
-      className: classes.albumsList,
-      attrs: { "data-singer-id": singer.id },
-    }
-  );
-  const $el = render("div", [$header, $albums], {
-    className: classes.singer,
-    attrs: { "data-id": singer.id },
+
+  singerAlbums.forEach((album) => {
+    const $album = renderAlbum(album);
+    $albums.appendChild($album);
   });
 
   $remove.addEventListener("click", () => {
@@ -63,5 +38,5 @@ export function renderSinger(singer) {
     emit(events.openAddAlbumDialog, singer.id);
   });
 
-  return $el;
+  return $singer;
 }
