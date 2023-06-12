@@ -45,10 +45,10 @@
       <dialog id="add-song-dialog">
         <form action="/song" id="add-song-form" method="POST">
           <input type="text" name="name" autocomplete="off" />
-          <textarea name="text"></textarea>
-          <select name="singer"></select>
-          <select name="album"></select>
-          <button type="submit">ADD SONG</button>
+          <div><textarea name="text"></textarea></div>
+          <div><select name="singer"></select></div>
+          <div><select name="album"></select></div>
+          <div><button type="submit">ADD SONG</button></div>
         </form>
       </dialog>
 
@@ -80,6 +80,24 @@
 
       <div class="loader"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="./js/state.js" type="module"></script>
+    <script src="./js/api.js" type="module"></script>
+    <script src="./js/emitter.js" type="module"></script>
+    <script src="./js/utils.js" type="module"></script>
+
+    <script src="./js/song.dom.js" type="module"></script>
+    <script src="./js/album.dom.js" type="module"></script>
+    <script src="./js/singer.dom.js" type="module"></script>
+
+    <script src="./js/song.actions.js" type="module"></script>
+    <script src="./js/album.actions.js" type="module"></script>
+    <script src="./js/singer.actions.js" type="module"></script>
+
+    <script src="./js/song.js" type="module"></script>
+    <script src="./js/album.js" type="module"></script>
+    <script src="./js/singer.js" type="module"></script>
+
+    <script src="./script.js" type="module"></script>
   </body>
 </html>
