@@ -33,9 +33,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
     case 'DELETE':
         $id = $_GET['id'];
-        $sql = "DELETE FROM singer WHERE id = $id";
-        $conn->query($sql);
-        echo $id;
+
+        $conn->query("DELETE FROM song 
+                        WHERE album_id IN 
+                        (SELECT id FROM album WHERE singer_id = '$id');");
+        $conn->query("DELETE FROM album WHERE singer_id = '$id';");
+        $conn->query("DELETE FROM singer WHERE id = '$id';");
+
+        echo true;
         break;
 }
 
