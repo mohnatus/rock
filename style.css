@@ -53,65 +53,42 @@ body.loading .loader {
 
 .app-header-container {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
   height: 60px;
   padding: 10px 20px;
   max-width: 1000px;
   margin: auto;
 }
 
-/* TABLE */
-
-.singer {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid gray;
+.app-header-title {
+  margin-right: 20px;
+  font-size: 1.5rem;
 }
-.singer-header {
+
+.app-header-actions {
+  margin-left: auto;
   display: flex;
-  margin-bottom: 10px;
-}
-.singer-name {
-  font-weight: bold;
-  flex-grow: 1;
 }
 
-.albums-list {
-  margin-left: 20px;
+/* TABLE */
+table {
+  width: 100%;
+  table-layout: fixed;
 }
-.album {
-  border: 1px solid gray;
-  margin-bottom: 10px;
+th,
+td {
   padding: 10px;
 }
-.album-header {
-  display: flex;
-  margin-bottom: 5px;
-}
-.album-name {
-  flex-grow: 1;
-}
-.songs-list {
-  padding-left: 20px;
-}
-.song {
-  display: flex;
-}
-.song:not(:last-child) {
-  margin-bottom: 10px;
-}
-.song-name {
-  flex-grow: 1;
-  font-style: italic;
-}
-
-.singer-actions,
-.album-actions,
-.song-actions {
-  flex-shrink: 0;
+.actions {
   display: flex;
   gap: 10px;
-  margin-left: 10px;
+}
+.song-text-wrapper {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.6rem;
 }
 
 /* DIALOG */
@@ -153,6 +130,11 @@ select {
   display: block;
   width: 100%;
   padding: 10px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
 .form-footer {

@@ -1,22 +1,24 @@
 <?php
 
 require_once '../db/connection.php';
+require_once './format.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        $sql = "SELECT * FROM song";
+        $sql = "SELECT song.*, album.name as album_name, singer.name as singer_name, singer.id as singer_id 
+                FROM song
+                JOIN album ON album.id = song.album_id
+                JOIN singer ON singer.id = album.singer_id";
+        if (isset($_GET['albumId'])) {
+            $albumId = $_GET['albumId'];
+            $sql .= " WHERE song.album_id = $albumId";
+        }
         $list = [];
         $result = $conn->query($sql);
         foreach ($result as $row) {
-            $list[] = [
-                'id' => $row['id'],
-                'name' => $row['name'],
-                'text' => $row['text'],
-                'albumId' => $row['album_id'],
-                'url' => $row['url']
-            ];
+            $list[] = formatSong($row);
         }
         echo json_encode($list);
         break;
@@ -46,7 +48,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             $sql = "INSERT INTO song 
                 (id, name, text, album_id, url) 
                 VALUES 
-                (NULL, '$name', '$text', '$albumId', '$url
+                (NULL, '$name', '$text', '$albumId', '$url'
             )";
             $conn->query($sql);
             $id = mysqli_insert_id($conn);
