@@ -1,24 +1,42 @@
 <?php
 
 require_once '../db/connection.php';
-require_once './format.php';
+require_once '../db/format.php';
 
 header('Content-Type: application/json; charset=utf-8');
+header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400');
 
-$sql = "SELECT song.*, 
-                album.id as album_id, 
-                album.name as album_name,
-                singer.id as singer_id, 
-                singer.name as singer_name
-        FROM song 
-        JOIN album ON song.album_id = album.id 
-        JOIN singer ON singer.id = album.singer_id
-        ORDER BY RAND() LIMIT 1";
+// GET: count,singer,album,popular
+
+$count = isset($_GET['count']) ? $_GET['count'] : 1;
+$where = "LENGTH(song.text) > 0";
+
+if (isset($_GET['popular']) && $_GET['popular'] == '1') {
+    $where .= " AND song.popular = 1";
+}
+
+if (isset($_GET['album'])) {
+    $albumId = $_GET['album'];
+    $where .= " AND album.id = '$albumId'";
+}
+
+if (isset($_GET['singer'])) {
+    $singerId = $_GET['singer'];
+    $where .= " AND singer.id = '$singerId'";
+}
+
+$sql = "$select_song_full_data
+        WHERE $where
+        ORDER BY RAND() LIMIT $count";
 
 $result = $conn->query($sql);
-$data = $result->fetch_assoc();
-$song = formatSong($data);
 
-echo json_encode($song);
+$list = [];
+foreach ($result as $row) {
+    $list[] = formatSong($row);
+}
+echo json_encode($list);
 
 $conn->close();

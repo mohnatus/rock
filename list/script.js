@@ -4,28 +4,8 @@ import {
   fromTemplate,
   setLoadingStatus,
 } from "../js/utils.dom.js";
-import { request } from "../js/utils.api.js";
 import { getState } from "../js/utils.state.js";
-
-const endpoint = "../api/singer.php";
-
-export const api = {
-  getList: () => request(endpoint),
-  createItem: (name) =>
-    request(endpoint, {
-      method: "POST",
-      body: { name },
-    }),
-  updateItem: (id, name) =>
-    request(endpoint, {
-      method: "POST",
-      body: {
-        id,
-        name,
-      },
-    }),
-  deleteItem: (id) => request(`${endpoint}?id=${id}`, { method: "DELETE" }),
-};
+import { api } from "../js/utils.api.js";
 
 const state = getState();
 
@@ -55,10 +35,10 @@ const actions = {
     const $dialog = getElement(ids.addSingerDialog);
     $dialog.showModal();
   },
-  addSinger(name) {
+  addSinger(name, yandexId) {
     setLoadingStatus(true);
 
-    api.createItem(name).then((singerData) => {
+    api.singer.createItem(name, yandexId).then((singerData) => {
       state.addItem(singerData);
       const $singer = renderSinger(singerData);
       const $list = getElement(ids.singersList);
@@ -72,11 +52,12 @@ const actions = {
     const $dialog = getElement(ids.editSingerDialog);
     $form.elements.id.value = singer.id;
     $form.elements.name.value = singer.name;
+    $form.elements.yandex.value = singer.yandexId;
     $dialog.showModal();
   },
-  editSinger(id, name) {
+  editSinger(id, name, yandexId) {
     setLoadingStatus(true);
-    api.updateItem(id, name).then((singerData) => {
+    api.singer.updateItem(id, name, yandexId).then((singerData) => {
       state.editItem(singerData);
       const $singer = findSingerElement(id);
       const $name = $singer.querySelector(`.${classes.singerName}`);
@@ -87,7 +68,7 @@ const actions = {
   removeSinger(singerId) {
     setLoadingStatus(true);
 
-    api.deleteItem(singerId).then(() => {
+    api.singer.deleteItem(singerId).then(() => {
       state.removeItem(singerId);
       const $singer = findSingerElement(singerId);
       if ($singer) $singer.remove();
@@ -151,8 +132,9 @@ function initAddSingerForm() {
   function submitHandler(event) {
     event.preventDefault();
     const name = $form.elements.name.value;
+    const yandexId = $form.elements.yandex.value;
 
-    actions.addSinger(name);
+    actions.addSinger(name, yandexId);
 
     $dialog.close();
     $form.reset();
@@ -172,8 +154,9 @@ function initEditSingerForm() {
 
     const singerId = parseInt($form.elements.id.value);
     const singerName = $form.elements.name.value.trim();
+    const yandexId = $form.elements.yandex.value.trim();
 
-    actions.editSinger(singerId, singerName);
+    actions.editSinger(singerId, singerName, yandexId);
 
     $dialog.close();
     $form.reset();
@@ -185,7 +168,7 @@ function initEditSingerForm() {
 function init() {
   setLoadingStatus(true);
 
-  api.getList().then((list) => {
+  api.singer.getList({}).then((list) => {
     state.setList(list);
     renderSingersList();
     setLoadingStatus(false);

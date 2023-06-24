@@ -38,6 +38,10 @@
         <label for="add-album-year">Год</label>
         <input type="text" id="add-album-year" name="year" />
       </div>
+      <div class="form-control">
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" />
+      </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>
       </footer>
@@ -57,6 +61,10 @@
         <label for="edit-album-year">Год</label>
         <input type="text" id="edit-album-year" name="year" />
       </div>
+      <div class="form-control">
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" disabled />
+      </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>
       </footer>
@@ -67,7 +75,8 @@
     <div class="app-container">
       <header class="app-header">
         <div class="app-header-container">
-          <h1 id="singer-name" class="app-header-title"></h1>
+          <a href="../list">Home</a>
+          <h2 id="singer-name" class="app-header-title"></h2>
 
           <div class="app-header-actions">
             <button id="add-album-button">ADD ALBUM</button>

@@ -36,6 +36,9 @@ export function fromTemplate(templateId, data) {
 
     const $attrs = $clone.querySelectorAll(`[data-attr='${key}']`);
     $attrs.forEach(($node) => ($node.dataset[key] = value));
+
+    const $hiddens = $clone.querySelectorAll(`[data-show='${key}']`);
+    $hiddens.forEach(($node) => ($node.hidden = !value));
   });
 
   return $clone;
@@ -51,5 +54,5 @@ export function initDialog(dialog) {
 }
 
 export function setLoadingStatus(status) {
-  document.body.classList.toggle('loading', status);
+  document.body.classList.toggle("loading", status);
 }

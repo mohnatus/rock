@@ -32,6 +32,10 @@
         <label for="add-singer-name">Название</label>
         <input type="text" id="add-singer-name" name="name" autocomplete="off" />
       </div>
+      <div class="form-control">
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" />
+      </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>
       </footer>
@@ -46,6 +50,10 @@
       <div class="form-control">
         <label for="edit-singer-name">Название</label>
         <input id="edit-singer-name" type="text" name="name" autocomplete="off" />
+      </div>
+      <div class="form-control">
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" disabled />
       </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>

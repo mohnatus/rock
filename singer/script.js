@@ -2,37 +2,13 @@ import {
   getElement,
   initDialog,
   fromTemplate,
-  setLoadingStatus
+  setLoadingStatus,
 } from "../js/utils.dom.js";
-import { request } from "../js/utils.api.js";
 import { getState } from "../js/utils.state.js";
 import { getUrlParam } from "../js/utils.url.js";
+import { api } from "../js/utils.api.js";
 
 const singerId = getUrlParam("id");
-
-const root = "../api";
-const endpoint = `${root}/album.php`;
-
-const api = {
-  getSinger: () => request(`${root}/singer.php?id=${singerId}`),
-  getList: () => request(`${endpoint}?singerId=${singerId}`),
-  createItem: ({ name, year }) =>
-    request(endpoint, {
-      method: "POST",
-      body: { name, singerId, year },
-    }),
-  updateItem: ({ id, name, year }) =>
-    request(endpoint, {
-      method: "POST",
-      body: {
-        id,
-        name,
-        singerId,
-        year,
-      },
-    }),
-  deleteItem: (id) => request(`${endpoint}?id=${id}`, { method: "DELETE" }),
-};
 
 const state = getState();
 
@@ -65,10 +41,10 @@ const actions = {
     const $dialog = getElement(ids.addAlbumDialog);
     $dialog.showModal();
   },
-  addAlbum(name, year) {
+  addAlbum(name, year, yandexId) {
     setLoadingStatus(true);
 
-    api.createItem({ name, year }).then((albumData) => {
+    api.album.createItem({ name, year, singerId, yandexId }).then((albumData) => {
       state.addItem(albumData);
       const $album = renderAlbum(albumData);
       const $list = getElement(ids.albumsList);
@@ -83,11 +59,12 @@ const actions = {
     $form.elements.id.value = album.id;
     $form.elements.name.value = album.name;
     $form.elements.year.value = album.year;
+    $form.elements.yandex.value = album.yandexId;
     $dialog.showModal();
   },
-  editAlbum(id, name, year) {
+  editAlbum(id, name, year, yandexId) {
     setLoadingStatus(true);
-    api.updateItem({ id, name, year }).then((albumData) => {
+    api.album.updateItem({ id, name, year, singerId }).then((albumData) => {
       state.editItem(albumData);
       const $album = findAlbumElement(id);
       const $name = $album.querySelector(`.${classes.albumName}`);
@@ -100,7 +77,7 @@ const actions = {
   removeAlbum(albumId) {
     setLoadingStatus(true);
 
-    api.deleteItem(albumId).then(() => {
+    api.album.deleteItem(albumId).then(() => {
       state.removeItem(albumId);
       const $album = findAlbumElement(albumId);
       if ($album) $album.remove();
@@ -166,8 +143,9 @@ function initAddAlbumForm() {
     event.preventDefault();
     const name = $form.elements.name.value;
     const year = $form.elements.year.value;
+    const yandexId = $form.elements.yandex.value;
 
-    actions.addAlbum(name, year);
+    actions.addAlbum(name, year, yandexId);
 
     $dialog.close();
     $form.reset();
@@ -188,8 +166,9 @@ function initEditAlbumForm() {
     const albumId = parseInt($form.elements.id.value);
     const albumName = $form.elements.name.value.trim();
     const albumYear = $form.elements.year.value;
+    const yandexId = $form.elements.yandex.value;
 
-    actions.editAlbum(albumId, albumName, albumYear);
+    actions.editAlbum(albumId, albumName, albumYear, yandexId);
 
     $dialog.close();
     $form.reset();
@@ -201,12 +180,12 @@ function initEditAlbumForm() {
 function init() {
   setLoadingStatus(true);
 
-  const albumsPromise = api.getList().then((list) => {
+  const albumsPromise = api.album.getList({singerId}).then((list) => {
     state.setList(list);
     renderAlbumsList();
   });
 
-  const singerPromise = api.getSinger().then((singerData) => {
+  const singerPromise = api.singer.getItem(singerId).then((singerData) => {
     const $singerName = getElement(ids.singerName);
     $singerName.innerHTML = singerData.name;
   });

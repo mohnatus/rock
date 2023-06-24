@@ -1,71 +1,43 @@
 <?php
 
 require_once '../db/connection.php';
-require_once './format.php';
+require_once '../db/song.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        $sql = "SELECT song.*, album.name as album_name, singer.name as singer_name, singer.id as singer_id 
-                FROM song
-                JOIN album ON album.id = song.album_id
-                JOIN singer ON singer.id = album.singer_id";
-        if (isset($_GET['albumId'])) {
-            $albumId = $_GET['albumId'];
-            $sql .= " WHERE song.album_id = $albumId";
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $song = getSong($id);
+            echo json_encode($song);
+        } else {
+            $list = getSongs(isset($_GET['albumId']) ? $_GET['albumId'] : null);
+            echo json_encode($list);
         }
-        $list = [];
-        $result = $conn->query($sql);
-        foreach ($result as $row) {
-            $list[] = formatSong($row);
-        }
-        echo json_encode($list);
         break;
+
     case 'POST':
         $name = $_POST['name'];
         $text = $_POST['text'];
         $albumId = $_POST['albumId'];
-        $url = $_POST['url'];
+        $yandexId = $_POST['yandexId'];
+        $popular = (int) $_POST['popular'];
 
         if (isset($_POST['id'])) {
             $id = $_POST['id'];
-            $sql = "UPDATE song SET 
-                    name = '$name', 
-                    text = '$text', 
-                    album_id = '$albumId', 
-                    url = '$url' 
-                    WHERE id = '$id'";
-            $conn->query($sql);
-            echo json_encode([
-                'id' => $id,
-                'name' => $name,
-                'text' => $text,
-                'albumId' => $albumId,
-                'url' => $url
-            ]);
+            $song = updateSong($id, $name, $text, $albumId, $yandexId, $popular);
+            echo json_encode($song);
         } else {
-            $sql = "INSERT INTO song 
-                (id, name, text, album_id, url) 
-                VALUES 
-                (NULL, '$name', '$text', '$albumId', '$url'
-            )";
-            $conn->query($sql);
-            $id = mysqli_insert_id($conn);
-            echo json_encode([
-                'id' => $id,
-                'name' => $name,
-                'text' => $text,
-                'albumId' => $albumId,
-                'url' => $url
-            ]);
+            $song = createSong($name, $text, $albumId, $yandexId, $popular);
+            echo json_encode($song);
         }
         break;
+
     case 'DELETE':
         $id = $_GET['id'];
-        $sql = "DELETE FROM song WHERE id = $id";
-        $conn->query($sql);
-        echo true;
+        deleteSong($id);
+        echo 1;
         break;
 }
 

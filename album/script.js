@@ -4,36 +4,11 @@ import {
   fromTemplate,
   setLoadingStatus,
 } from "../js/utils.dom.js";
-import { request } from "../js/utils.api.js";
 import { getState } from "../js/utils.state.js";
 import { getUrlParam } from "../js/utils.url.js";
+import { api } from "../js/utils.api.js";
 
 const albumId = getUrlParam("id");
-
-const root = "../api";
-const endpoint = `${root}/song.php`;
-
-export const api = {
-  getAlbum: () => request(`${root}/album.php?id=${albumId}`),
-  getList: () => request(`${endpoint}?albumId=${albumId}`),
-  createItem: ({ name, text, url }) =>
-    request(endpoint, {
-      method: "POST",
-      body: { name, text, url, albumId },
-    }),
-  updateItem: ({ id, name, text, url }) =>
-    request(endpoint, {
-      method: "POST",
-      body: {
-        id,
-        name,
-        albumId,
-        text,
-        url,
-      },
-    }),
-  deleteItem: (id) => request(`${endpoint}?id=${id}`, { method: "DELETE" }),
-};
 
 const state = getState();
 
@@ -55,6 +30,8 @@ const classes = {
   song: "song",
   songName: "song-name",
   songText: "song-text",
+  songMedia: "song-media",
+  songPopular: "song-popular",
 };
 
 export function findSongElement(id) {
@@ -67,15 +44,17 @@ const actions = {
     const $dialog = getElement(ids.addSongDialog);
     $dialog.showModal();
   },
-  addSong({ name, text, url }) {
+  addSong({ name, text, yandexId, popular }) {
     setLoadingStatus(true);
-    api.createItem({ name, text, url }).then((songData) => {
-      state.addItem(songData);
-      const $song = renderSong(songData);
-      const $list = getElement(ids.songsList);
-      $list.appendChild($song);
-      setLoadingStatus(false);
-    });
+    api.song
+      .createItem({ name, text, yandexId, albumId, popular })
+      .then((songData) => {
+        state.addItem(songData);
+        const $song = renderSong(songData);
+        const $list = getElement(ids.songsList);
+        $list.appendChild($song);
+        setLoadingStatus(false);
+      });
   },
   openEditSongDialog(songId) {
     const song = state.getItem(songId);
@@ -84,25 +63,32 @@ const actions = {
     $form.elements.id.value = song.id;
     $form.elements.name.value = song.name;
     $form.elements.text.value = song.text;
-    $form.elements.url.value = song.url;
+    $form.elements.yandex.value = song.yandexId;
+    $form.elements.popular.checked = song.popular;
     $dialog.showModal();
   },
-  editSong({ id, name, text, url }) {
+  editSong({ id, name, text, yandexId, popular }) {
     setLoadingStatus(true);
-    api.updateItem({ id, name, text, url }).then((songData) => {
-      state.editItem(songData);
-      const $song = findSongElement(id);
-      const $name = $song.querySelector(`.${classes.songName}`);
-      const $text = $song.querySelector(`.${classes.songText}`);
-      $name.innerHTML = name;
-      $text.innerHTML = text;
-      setLoadingStatus(false);
-    });
+    api.song
+      .updateItem({ id, name, text, yandexId, albumId, popular })
+      .then((songData) => {
+        state.editItem(songData);
+        const $song = findSongElement(id);
+        const $name = $song.querySelector(`.${classes.songName}`);
+        const $text = $song.querySelector(`.${classes.songText}`);
+        const $popular = $song.querySelector(`.${classes.songPopular}`);
+
+        $name.innerHTML = songData.name;
+        $text.innerHTML = songData.text;
+        $popular.hidden = songData.popular != 1;
+
+        setLoadingStatus(false);
+      });
   },
   removeSong(songId) {
     setLoadingStatus(true);
 
-    api.deleteItem(songId).then(() => {
+    api.song.deleteItem(songId).then(() => {
       state.removeItem(songId);
       const $song = findSongElement(songId);
       if ($song) $song.remove();
@@ -116,7 +102,11 @@ export function renderSong(song) {
     name: song.name,
     id: song.id,
     text: song.text,
+    popular: song.popular
   });
+
+  const $name = $song.querySelector(`.${classes.songName}`);
+  $name.href = `../song?id=${song.id}`;
 
   const $remove = $song.querySelector('[data-action="remove"]');
   const $edit = $song.querySelector('[data-action="edit"]');
@@ -163,9 +153,10 @@ function initAddSongForm() {
     event.preventDefault();
     const name = $form.elements.name.value;
     const text = $form.elements.text.value;
-    const url = $form.elements.url.value;
+    const yandexId = $form.elements.yandex.value;
+    const popular = $form.elements.popular.checked;
 
-    actions.addSong({ name, text, url });
+    actions.addSong({ name, text, yandexId, popular });
 
     $dialog.close();
     $form.reset();
@@ -186,9 +177,10 @@ function initEditSongForm() {
     const id = parseInt($form.elements.id.value);
     const name = $form.elements.name.value.trim();
     const text = $form.elements.text.value;
-    const url = $form.elements.url.value;
+    const yandexId = $form.elements.yandex.value;
+    const popular = $form.elements.popular.checked;
 
-    actions.editSong({ id, name, text, url });
+    actions.editSong({ id, name, text, yandexId, popular });
 
     $dialog.close();
     $form.reset();
@@ -200,15 +192,16 @@ function initEditSongForm() {
 function init() {
   setLoadingStatus(true);
 
-  const songsPromise = api.getList().then((list) => {
+  const songsPromise = api.song.getList({ albumId }).then((list) => {
     state.setList(list);
     renderSongsList();
   });
 
-  const albumPromise = api.getAlbum().then((albumData) => {
+  const albumPromise = api.album.getItem(albumId).then((albumData) => {
     const $singerName = getElement(ids.singerName);
     const $albumName = getElement(ids.albumName);
     $singerName.innerHTML = albumData.singer.name;
+    $singerName.href = `../singer?id=${albumData.singer.id}`;
     $albumName.innerHTML = albumData.name;
   });
 

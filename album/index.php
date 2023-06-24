@@ -9,7 +9,9 @@
   <template id="song-template">
     <tr class="song" data-attr="id">
       <td>
-        <b class="song-name" data-text="name"></b>
+        <a class="song-name" data-text="name"></a>
+        <br>
+        <div class="song-popular" data-show="popular">Популярная</div>
         <br>
         <div class="song-text-wrapper">
           <span class="song-text" data-text="text"></span>
@@ -41,8 +43,12 @@
         <textarea id="add-song-text" name="text"></textarea>
       </div>
       <div class="form-control">
-        <label for="add-song-url">Ссылка на клип</label>
-        <input id="add-song-url" type="text" name="url" />
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" />
+      </div>
+      <div class="form-control">
+        <label for="add-song-popular">Популярная песня</label>
+        <input type="checkbox" id="add-song-popular" name="popular">
       </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>
@@ -63,12 +69,14 @@
         <label for="edit-song-text">Текст</label>
         <textarea id="edit-song-text" name="text"></textarea>
       </div>
-
       <div class="form-control">
-        <label for="edit-song-url">Ссылка на клип</label>
-        <input id="edit-song-url" type="text" name="url" />
+        <label for="add-song-yandex">YandexMusic ID</label>
+        <input id="add-song-yandex" type="text" name="yandex" disabled />
       </div>
-
+      <div class="form-control">
+        <label for="add-song-popular">Популярная песня</label>
+        <input type="checkbox" id="add-song-popular" name="popular">
+      </div>
       <footer class="form-footer">
         <button type="submit">Сохранить</button>
       </footer>
@@ -79,10 +87,11 @@
     <div class="app-container">
       <header class="app-header">
         <div class="app-header-container">
-          <h1 class="app-header-title">
-            <span id="singer-name"></span>,
+          <a href="../list">Home</a>
+          <h2 class="app-header-title">
+            <a id="singer-name"></a>,
             <span id="album-name"></span>
-          </h1>
+          </h2>
 
           <div class="app-header-actions">
             <button id="add-song-button">ADD SONG</button>
@@ -96,6 +105,7 @@
             <th>
               Название
             </th>
+
             <th width="50"></th>
           </tr>
         </thead>
